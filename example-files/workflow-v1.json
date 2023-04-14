@@ -1,182 +1,183 @@
 {
-    "workflow_name": "Hold orders if customer placed more than 1 order in last 24 hours",
-    "__metadata": {
-        "version": 0.1
-    },
-    "root": {
-        "steps": [
-            {
-                "name": "start",
-                "config_field_values": [],
-                "task_id": "shopify::admin::order_created",
-                "task_version": "0.1",
-                "task_type": "TRIGGER",
-                "description": null,
-                "note": null
-
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "sort_by",
-                        "value": "{\"sortKey\":\"CREATED_AT\",\"order\":\"ASCENDING\"}"
-                    },
-                    {
-                        "config_field_id": "max_root_records",
-                        "value": "100"
-                    },
-                    {
-                        "config_field_id": "query",
-                        "value": "created_at:<='{{ \"now\" }}' AND created_at:>'{{ \"now\" | date_minus: \"1 days\" }}' AND customer_id:{{ order.customer.legacyResourceId}}"
-                    }
-                ],
-                "task_id": "shopify::flow::fetch::orders",
-                "task_version": "v1",
-                "task_type": "ACTION",
-                "description": "Tip: Change the date_minus field to the amount of time you want to check and then remove this custom description.",
-                "note": null,
-                "name": "Get order data"
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "condition",
-                        "value": "{\"uuid\":\"56eb61e3-0ea6-11ed-aedc-fd52d33bdabd\",\"lhs\":{\"uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"parent_uuid\":\"56eb61e3-0ea6-11ed-aedc-fd52d33bdabd\",\"lhs\":{\"uuid\":\"56eb61e1-0ea6-11ed-aedc-fd52d33bdabd\",\"parent_uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"value\":\"count\",\"comparison_value_type\":\"EnvironmentValue\",\"full_environment_path\":\"count\"},\"rhs\":{\"uuid\":\"48b14010-7ca4-11ed-9f3a-711320a9e085\",\"parent_uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"value\":\"1\",\"comparison_value_type\":\"LiteralValue\"},\"value_type\":\"EnvironmentScalarDefinition:Int\",\"operator\":\">\",\"operation_type\":\"Comparison\"},\"operator\":\"AND\",\"operation_type\":\"LogicalExpression\"}"
-                    }
-                ],
-                "task_id": "shopify::flow::condition",
-                "task_version": "0.1",
-                "task_type": "CONDITION",
-                "description": null,
-                "note": null,
-                "name": null
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "listpath",
-                        "value": "getOrderData"
-                    }
-                ],
-                "task_id": "shopify::flow::count",
-                "task_version": "0.1",
-                "task_type": "ACTION",
-                "description": null,
-                "note": null,
-                "name": "Count"
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "listpath",
-                        "value": "getOrderData"
-                    }
-                ],
-                "task_id": "shopify::flow::foreach",
-                "task_version": "0.1",
-                "task_type": "FOREACH",
-                "description": null,
-                "note": null,
-                "name": "For each"
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "order_id",
-                        "value": "getOrderDataForeachitem.id"
-                    },
-                    {
-                        "config_field_id": "fulfillment_id",
-                        "value": ""
-                    },
-                    {
-                        "config_field_id": "reason",
-                        "value": "OTHER"
-                    },
-                    {
-                        "config_field_id": "reasonNotes",
-                        "value": "Multiple orders"
-                    },
-                    {
-                        "config_field_id": "notifyMerchant",
-                        "value": "false"
-                    }
-                ],
-                "task_id": "shopify::admin::hold_fulfillment",
-                "task_version": "0.4",
-                "task_type": "ACTION",
-                "description": null,
-                "note": null,
-                "name": null
-            },
-            {
-                "config_field_values": [
-                    {
-                        "config_field_id": "customer_id",
-                        "value": "order.customer.id"
-                    },
-                    {
-                        "config_field_id": "namespace",
-                        "value": "foo"
-                    },
-                    {
-                        "config_field_id": "key",
-                        "value": "bar"
-                    },
-                    {
-                        "config_field_id": "value",
-                        "value": "{% assign accumulation = 0 %}\n{% for metafields_item in order.customer.metafields %}\n  {% if metafields_item.namespace == \"loyalty\" and metafields_item.key == \"points\" %}\n    {% assign accumulation =  metafields_item.value %}\n  {% endif %}\n{% endfor %}\n{{na}}\n"
-                    },
-                    {
-                        "config_field_id": "value_type",
-                        "value": "number_integer"
-                    }
-                ],
-                "task_id": "shopify::admin::add_customer_metafield",
-                "task_version": "0.1",
-                "task_type": "ACTION",
-                "description": null,
-                "note": null,
-                "name": null
-            }
-        ],
-        "links": [
-            {
-                "from_step_id": "6344235f-7a69-4fd0-98b7-9f1709cb0a89",
-                "from_port_id": "output",
-                "to_step_id": "7e0761fb-650a-4fcb-bb84-b5a3ce9154da",
-                "to_port_id": "input"
-            },
-            {
-                "from_step_id": "7e0761fb-650a-4fcb-bb84-b5a3ce9154da",
-                "from_port_id": "output",
-                "to_step_id": "ba6d4318-7c20-4d19-812d-33c6729cf632",
-                "to_port_id": "input"
-            },
-            {
-                "from_step_id": "ba6d4318-7c20-4d19-812d-33c6729cf632",
-                "from_port_id": "output",
-                "to_step_id": "e0ea5d56-2686-4381-be80-c7d008c32180",
-                "to_port_id": "input"
-            },
-            {
-                "from_step_id": "e0ea5d56-2686-4381-be80-c7d008c32180",
-                "from_port_id": "true",
-                "to_step_id": "088ab7db-ca52-4346-9f54-e70c7f1d0edb",
-                "to_port_id": "input"
-            },
-            {
-                "from_step_id": "088ab7db-ca52-4346-9f54-e70c7f1d0edb",
-                "from_port_id": "loop_body",
-                "to_step_id": "21edc2b4-2e91-454f-8c70-9b48186455d5",
-                "to_port_id": "input"
-            },
-            {
-                "from_step_id": "6344235f-7a69-4fd0-98b7-9f1709cb0a89",
-                "from_port_id": "output",
-                "to_step_id": "ad0e8dc0-ca50-11ed-a6dd-f3ff35622a0a",
-                "to_port_id": "input"
-            }
-        ]
+    "workflow": {
+        "workflow_name": "Hold orders if customer placed more than 1 order in last 24 hours",
+        "__metadata": {
+            "version": 0.1
+        },
+        "root": {
+            "steps": [
+                {
+                    "name": "start",
+                    "config_field_values": [],
+                    "task_id": "shopify::admin::order_created",
+                    "task_version": "0.1",
+                    "task_type": "TRIGGER",
+                    "description": null,
+                    "note": null
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "sort_by",
+                            "value": "{\"sortKey\":\"CREATED_AT\",\"order\":\"ASCENDING\"}"
+                        },
+                        {
+                            "config_field_id": "max_root_records",
+                            "value": "100"
+                        },
+                        {
+                            "config_field_id": "query",
+                            "value": "created_at:<='{{ \"now\" }}' AND created_at:>'{{ \"now\" | date_minus: \"1 days\" }}' AND customer_id:{{ order.customer.legacyResourceId}}"
+                        }
+                    ],
+                    "task_id": "shopify::flow::fetch::orders",
+                    "task_version": "v1",
+                    "task_type": "ACTION",
+                    "description": "Tip: Change the date_minus field to the amount of time you want to check and then remove this custom description.",
+                    "note": null,
+                    "name": "Get order data"
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "condition",
+                            "value": "{\"uuid\":\"56eb61e3-0ea6-11ed-aedc-fd52d33bdabd\",\"lhs\":{\"uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"parent_uuid\":\"56eb61e3-0ea6-11ed-aedc-fd52d33bdabd\",\"lhs\":{\"uuid\":\"56eb61e1-0ea6-11ed-aedc-fd52d33bdabd\",\"parent_uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"value\":\"count\",\"comparison_value_type\":\"EnvironmentValue\",\"full_environment_path\":\"count\"},\"rhs\":{\"uuid\":\"48b14010-7ca4-11ed-9f3a-711320a9e085\",\"parent_uuid\":\"56eb61e0-0ea6-11ed-aedc-fd52d33bdabd\",\"value\":\"1\",\"comparison_value_type\":\"LiteralValue\"},\"value_type\":\"EnvironmentScalarDefinition:Int\",\"operator\":\">\",\"operation_type\":\"Comparison\"},\"operator\":\"AND\",\"operation_type\":\"LogicalExpression\"}"
+                        }
+                    ],
+                    "task_id": "shopify::flow::condition",
+                    "task_version": "0.1",
+                    "task_type": "CONDITION",
+                    "description": null,
+                    "note": null,
+                    "name": null
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "listpath",
+                            "value": "getOrderData"
+                        }
+                    ],
+                    "task_id": "shopify::flow::count",
+                    "task_version": "0.1",
+                    "task_type": "ACTION",
+                    "description": null,
+                    "note": null,
+                    "name": "Count"
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "listpath",
+                            "value": "getOrderData"
+                        }
+                    ],
+                    "task_id": "shopify::flow::foreach",
+                    "task_version": "0.1",
+                    "task_type": "FOREACH",
+                    "description": null,
+                    "note": null,
+                    "name": "For each"
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "order_id",
+                            "value": "getOrderDataForeachitem.id"
+                        },
+                        {
+                            "config_field_id": "fulfillment_id",
+                            "value": ""
+                        },
+                        {
+                            "config_field_id": "reason",
+                            "value": "OTHER"
+                        },
+                        {
+                            "config_field_id": "reasonNotes",
+                            "value": "Multiple orders"
+                        },
+                        {
+                            "config_field_id": "notifyMerchant",
+                            "value": "false"
+                        }
+                    ],
+                    "task_id": "shopify::admin::hold_fulfillment",
+                    "task_version": "0.4",
+                    "task_type": "ACTION",
+                    "description": null,
+                    "note": null,
+                    "name": null
+                },
+                {
+                    "config_field_values": [
+                        {
+                            "config_field_id": "customer_id",
+                            "value": "order.customer.id"
+                        },
+                        {
+                            "config_field_id": "namespace",
+                            "value": "foo"
+                        },
+                        {
+                            "config_field_id": "key",
+                            "value": "bar"
+                        },
+                        {
+                            "config_field_id": "value",
+                            "value": "{% assign accumulation = 0 %}\n{% for metafields_item in order.customer.metafields %}\n  {% if metafields_item.namespace == \"loyalty\" and metafields_item.key == \"points\" %}\n    {% assign accumulation =  metafields_item.value %}\n  {% endif %}\n{% endfor %}\n{{na}}\n"
+                        },
+                        {
+                            "config_field_id": "value_type",
+                            "value": "number_integer"
+                        }
+                    ],
+                    "task_id": "shopify::admin::add_customer_metafield",
+                    "task_version": "0.1",
+                    "task_type": "ACTION",
+                    "description": null,
+                    "note": null,
+                    "name": null
+                }
+            ],
+            "links": [
+                {
+                    "from_step_id": "6344235f-7a69-4fd0-98b7-9f1709cb0a89",
+                    "from_port_id": "output",
+                    "to_step_id": "7e0761fb-650a-4fcb-bb84-b5a3ce9154da",
+                    "to_port_id": "input"
+                },
+                {
+                    "from_step_id": "7e0761fb-650a-4fcb-bb84-b5a3ce9154da",
+                    "from_port_id": "output",
+                    "to_step_id": "ba6d4318-7c20-4d19-812d-33c6729cf632",
+                    "to_port_id": "input"
+                },
+                {
+                    "from_step_id": "ba6d4318-7c20-4d19-812d-33c6729cf632",
+                    "from_port_id": "output",
+                    "to_step_id": "e0ea5d56-2686-4381-be80-c7d008c32180",
+                    "to_port_id": "input"
+                },
+                {
+                    "from_step_id": "e0ea5d56-2686-4381-be80-c7d008c32180",
+                    "from_port_id": "true",
+                    "to_step_id": "088ab7db-ca52-4346-9f54-e70c7f1d0edb",
+                    "to_port_id": "input"
+                },
+                {
+                    "from_step_id": "088ab7db-ca52-4346-9f54-e70c7f1d0edb",
+                    "from_port_id": "loop_body",
+                    "to_step_id": "21edc2b4-2e91-454f-8c70-9b48186455d5",
+                    "to_port_id": "input"
+                },
+                {
+                    "from_step_id": "6344235f-7a69-4fd0-98b7-9f1709cb0a89",
+                    "from_port_id": "output",
+                    "to_step_id": "ad0e8dc0-ca50-11ed-a6dd-f3ff35622a0a",
+                    "to_port_id": "input"
+                }
+            ]
+        }
     }
 }
