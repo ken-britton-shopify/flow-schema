@@ -1,0 +1,29 @@
+{
+    "metadata": {},
+    "root": {
+      "title": "Welcome New Subscribers",
+      "steps": [
+        {
+          "task_id": "flow::triggers::customer_subscribed",
+          "task_version": "0.1",
+          "then": {
+            "task_id": "flow::condition",
+            "task_version": "0.1",
+            "description": "Customer didn't subscribe at checkout",
+            "config_fields": {
+              "condition": "IF `customer.emailSubscrptionMethod` NOT EQUAL 'CHECKOUT'"
+            },
+            "then": {
+              "task_id": "flow::shopify::send_marketing_email",
+              "task_version": "0.2",
+              "config_fields": {
+                "platform_marketing_activity_id_config_field": "gid://.../123",
+                "delivery_target_id": "{{customer.id}}",
+                "default_config_field_intent": "welcome_email"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }

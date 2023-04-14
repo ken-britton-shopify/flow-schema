@@ -1,0 +1,94 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+      "workflow": {
+        "type": "object",
+        "properties": {
+          "workflow_name": {
+            "type": "string"
+          },
+          "__metadata": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "number"
+              }
+            },
+            "required": ["version"]
+          },
+          "root": {
+            "type": "object",
+            "properties": {
+              "steps": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": ["string", "null"]
+                    },
+                    "config_field_values": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "config_field_id": {
+                            "type": "string"
+                          },
+                          "value": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["config_field_id", "value"]
+                      }
+                    },
+                    "task_id": {
+                      "type": "string"
+                    },
+                    "task_version": {
+                      "type": "string"
+                    },
+                    "task_type": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": ["string", "null"]
+                    },
+                    "note": {
+                      "type": ["string", "null"]
+                    }
+                  },
+                  "required": ["name", "config_field_values", "task_id", "task_version", "task_type", "description", "note"]
+                }
+              },
+              "links": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "from_step_id": {
+                      "type": "string"
+                    },
+                    "from_port_id": {
+                      "type": "string"
+                    },
+                    "to_step_id": {
+                      "type": "string"
+                    },
+                    "to_port_id": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["from_step_id", "from_port_id", "to_step_id", "to_port_id"]
+                }
+              }
+            },
+            "required": ["steps", "links"]
+          }
+        },
+        "required": ["workflow_name", "__metadata", "root"]
+      }
+    },
+    "required": ["workflow"]
+  }

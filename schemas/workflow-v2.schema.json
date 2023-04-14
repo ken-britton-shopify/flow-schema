@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object"
+    },
+    "root": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "task_id": {
+                "type": "string"
+              },
+              "task_version": {
+                "type": "string"
+              },
+              "then": {
+                "type": "object",
+                "properties": {
+                  "task_id": {
+                    "type": "string"
+                  },
+                  "task_version": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": ["string", "null"]
+                  },
+                  "config_fields": {
+                    "type": ["null", "object"],
+                    "properties": {
+                      "condition": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": true,
+                    "required": ["condition"]
+                  },
+                  "then": {
+                    "type": "object",
+                    "properties": {
+                      "task_id": {
+                        "type": "string"
+                      },
+                      "task_version": {
+                        "type": "string"
+                      },
+                      "config_fields": {
+                        "type": "object",
+                        "properties": {
+                          "platform_marketing_activity_id_config_field": {
+                            "type": "string"
+                          },
+                          "delivery_target_id": {
+                            "type": "string"
+                          },
+                          "default_config_field_intent": {
+                            "type": "string"
+                          }
+                        },
+                        "additionalProperties": true
+                      }
+                    },
+                    "additionalProperties": true,
+                    "required": ["task_id", "task_version", "config_fields"]
+                  }
+                },
+                "additionalProperties": true,
+                "required": ["task_id", "task_version", "description", "config_fields"]
+              },
+              "additionalProperties": true
+            },
+            "required": ["task_id", "task_version", "then"]
+          }
+        }
+      },
+      "required": ["title", "steps"]
+    }
+  },
+  "additionalProperties": false,
+  "required": ["metadata", "root"]
+}

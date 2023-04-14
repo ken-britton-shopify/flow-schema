@@ -1,0 +1,16 @@
+{
+    "json.schemas": [
+      {
+        "fileMatch": [
+          "/example-files/*-v1.json" // Replace with a pattern that matches your JSON data files' paths
+        ],
+        "url": "/schemas/workflow-v1.schema.json"
+      },
+      {
+        "fileMatch": [
+          "/example-files/*-v2.json" // Replace with a pattern that matches your JSON data files' paths
+        ],
+        "url": "/schemas/workflow-v2.schema.json"
+      }
+    ]
+  }
